@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,16 +10,25 @@ namespace IC.Tcp
 {
     public class ICTcpConnection : IConnection
     {
-        public string SessionId => throw new NotImplementedException();
+        private TcpClient tcpClient;
+        public ICTcpConnection(TcpClient tcpClient)
+        {
+            if (tcpClient == null)
+            {
+                throw new ArgumentNullException("tcpClientWrapper");
+            }
+
+            this.tcpClient = tcpClient;
+        }
+
+        public string SessionId => tcpClient.GetHashCode().ToString();
 
         public void Close()
         {
-            throw new NotImplementedException();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public MessageResponse SendMessageToClient(MessageRequest messageRequest)

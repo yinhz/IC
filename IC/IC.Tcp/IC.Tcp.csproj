@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="ICTcpConnection.cs" />
     <Compile Include="ICTcpServer.cs" />
+    <Compile Include="ICTcpMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

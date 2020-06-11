@@ -35,4 +35,12 @@ namespace IC.Core
         public virtual string ErrorCode { get; set; }
         public virtual string ErrorMessage { get; set; }
     }
+
+    public static class CommandUtils
+    {
+        public static string ToJson(this ICommand command)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(command);
+        }
+    }
 }

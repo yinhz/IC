@@ -30,11 +30,7 @@ namespace IC.Core
             this.ClientId = clientId;
             this.Connection = connection;
         }
-
-        public Client()
-        {
-        }
-
+        
         public override int GetHashCode()
         {
             return ("Client" + this.ClientId.ToString()).GetHashCode();

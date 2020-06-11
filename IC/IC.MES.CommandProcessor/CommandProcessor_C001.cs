@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace IC.MES.CommandProcessor
 {
     [CommandProcessorDescription("C001")]
-    public class CommandProcessor_C001 : CommandProcessor<RequestCommand_001, ResponseCommand>
+    public class CommandProcessor_C001 : CommandProcessor<RequestCommand_001, ResponseCommand_001>
     {
         public CommandProcessor_C001()
         {
@@ -20,16 +20,20 @@ namespace IC.MES.CommandProcessor
             return Newtonsoft.Json.JsonConvert.DeserializeObject<RequestCommand_001>(commandJson);
         }
 
-        public override ResponseCommand Process(RequestCommand_001 requestCommand, MessageRequest messageRequest)
+        public override ResponseCommand_001 Process(RequestCommand_001 requestCommand, MessageRequest messageRequest)
         {
-            return new ResponseCommand() { IsSuccess = true };
+            return new ResponseCommand_001() { IsSuccess = true, Content = messageRequest.CommandRequestJson };
         }
     }
 
     public class RequestCommand_001 : RequestCommand
     {
         public string EquipmentCode { get; set; }
-        
+
         public override string CommandId => "C001";
+    }
+    public class ResponseCommand_001 : ResponseCommand
+    {
+        public string Content { get; set; }
     }
 }

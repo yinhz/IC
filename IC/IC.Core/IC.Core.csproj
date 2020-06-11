@@ -61,6 +61,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="ICServer.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Singleton.cs" />
   </ItemGroup>

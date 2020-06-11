@@ -1,8 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace IC.Core
 {
+    [Serializable]
     [DataContract]
     public class MessageRequest
     {
@@ -45,32 +49,19 @@ namespace IC.Core
 
     public static class MessageUtils
     {
-        public static string ToJson(this ICommand command)
+        public static byte[] ToBinaryFormatter(this MessageRequest messageRequest)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(command);
+            return messageRequest.SerializeToBinaryFormatter();
         }
-        public static RequestCommand GetRequestCommand(this MessageRequest messageRequest)
+
+        public static MessageRequest FromBinaryFormatter(byte[] bytes)
         {
-            if (messageRequest == null)
-            {
-                throw new ArgumentNullException("messageRequest");
-            }
+            var obj = Utils.DeserializeToObject(bytes);
 
-            if (string.IsNullOrEmpty(messageRequest.CommandRequestJson))
-            {
-                throw new ArgumentNullException("messageRequest.JsonContent");
-            }
+            if (obj == null || !(obj is MessageRequest))
+                throw new SerializationException();
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<RequestCommand>(messageRequest.CommandRequestJson);
-        }
-        public static ICommand ToCommand(this string jsonCommand)
-        {
-            if (string.IsNullOrEmpty(jsonCommand))
-            {
-                throw new ArgumentNullException("jsonCommand");
-            }
-
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<ICommand>(jsonCommand);
+            return obj as MessageRequest;
         }
     }
 }
