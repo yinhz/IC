@@ -7,59 +7,40 @@ using System.Threading.Tasks;
 
 namespace IC.Tcp.Client
 {
-    public class ICTcpClient
+    public class ICTcpClient 
     {
-        public void T(string server = "127.0.0.1", string message = "")
+        private TcpClient tcpClient;
+        public ICTcpClient(string server = "127.0.0.1", int port = 36001)
         {
-            try
-            {
-                // Create a TcpClient.
-                // Note, for this client to work you need to have a TcpServer
-                // connected to the same address as specified by the server, port
-                // combination.
-                Int32 port = 36001;
-                TcpClient client = new TcpClient(server, port);
+            this.tcpClient = new System.Net.Sockets.TcpClient();
+            tcpClient.Connect(server, port);
+        }
+        
+        public void Connect()
+        {
+            //using ()
+            //{
 
-                // Translate the passed message into ASCII and store it as a Byte array.
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
+                
 
-                // Get a client stream for reading and writing.
-                //  Stream stream = client.GetStream();
+            //    MessageRequest messageRequest = new MessageRequest() { CommandId = "C001", CommandRequestJson = "{\"ABC\":\"123\"}" };
 
-                NetworkStream stream = client.GetStream();
+            //    byte[] messageBytes = messageRequest.SerializeToBinaryFormatter();
 
-                // Send the message to the connected TcpServer.
-                stream.Write(data, 0, data.Length);
+            //    byte[] data = new byte[IC_TCP_MESSAGE_HEADER.HeaderLength + messageBytes.Length];
 
-                Console.WriteLine("Sent: {0}", message);
+            //    IC_TCP_MESSAGE_HEADER header = IC_TCP_MESSAGE_HEADER.CreateICTcpMessageHeader(MessageType.Request, messageBytes.Length);
 
-                // Receive the TcpServer.response.
+            //    Buffer.BlockCopy(Utils.StructToBytes(header), 0, data, 0, IC_TCP_MESSAGE_HEADER.HeaderLength - 1);
+            //    Buffer.BlockCopy(messageBytes, 0, data, IC_TCP_MESSAGE_HEADER.HeaderLength, messageBytes.Length - 1);
 
-                // Buffer to store the response bytes.
-                data = new Byte[256];
-
-                // String to store the response ASCII representation.
-                String responseData = String.Empty;
-
-                // Read the first batch of the TcpServer response bytes.
-                Int32 bytes = stream.Read(data, 0, data.Length);
-                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine("Received: {0}", responseData);
-
-                // Close everything.
-                stream.Close();
-                client.Close();
-
-
-            }
-            catch (ArgumentNullException e)
-            {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
-            }
+            //    while (true)
+            //    {
+            //        var ns = tcpClient.GetStream();
+            //        ns.Write(data, 0, data.Length);
+            //        System.Threading.Thread.Sleep(100);
+            //    }
+            //}
         }
     }
 }

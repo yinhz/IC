@@ -55,30 +55,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connected Services\ICWcfService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="WcfServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\IC.WCF.ConsoleHost\App.config">
-      <Link>App.config</Link>
-    </None>
-    <None Include="Connected Services\ICWcfService\IC.WCF.ConsoleHost.Test.ICWcfService.MessageResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Connected Services\ICWcfService\ICWcfService.wsdl" />
-    <None Include="Connected Services\ICWcfService\item.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\ICWcfService\item1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\ICWcfService\item2.xsd">
-      <SubType>Designer</SubType>
+    <None Include="..\IC.WCF.Client\app.config">
+      <Link>app.config</Link>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\IC.Core.MessageResponse.datasource" />
@@ -91,24 +73,6 @@
       <Project>{8da52f22-e4f6-4200-9e90-b5be5908d164}</Project>
       <Name>IC.WCF.Client</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Connected Services\ICWcfService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ICWcfService\item.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ICWcfService\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ICWcfService\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ICWcfService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

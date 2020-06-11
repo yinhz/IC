@@ -6,15 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace IC.Tcp
 {
-    public struct ICTcpHeader
+    public struct ICTcpHeaderStruct
     {
-        string Header { get; set; }
-        int DataLength { get; set; }
+        public string Header { get; set; }
+        public int DataLength { get; set; }
     }
-    
+
     public class ICTcpServer : ICServer
     {
         public System.Collections.Concurrent.ConcurrentBag<TcpClient> tcpClients = new System.Collections.Concurrent.ConcurrentBag<TcpClient>();
@@ -39,59 +41,108 @@ namespace IC.Tcp
         {
             var listener = (ar.AsyncState as TcpListener);
 
-            using (var tcpClient = listener.EndAcceptTcpClient(ar))
+            try
             {
-                string clientId = System.Guid.NewGuid().ToString();
+                var tcpClient = listener.EndAcceptTcpClient(ar);
 
-                base.ClientConnect(new Client(clientId, new ICTcpConnection(tcpClient) { }));
-
-                using (var networkStream = tcpClient.GetStream())
+                Task.Run(() =>
                 {
-                    while (true)
+                    try
                     {
-                        try
+                        string clientId = System.Guid.NewGuid().ToString();
+
+                        base.ClientConnect(new Client(clientId, new ICTcpConnection(tcpClient) { }));
+
+                        using (var networkStream = tcpClient.GetStream())
                         {
-                            byte[] bytes = new byte[tcpClient.ReceiveBufferSize];
+                            var clientBufferQueue = new System.Collections.Generic.Queue<byte>();
 
-                            // read 同步阻塞进行，一定要保证客户端同步写入。如果真的错误怎么处理？？
-                            // 原因应该发送  HEADER+LENG+DATA, 但是接收一半就错乱了如何处理？？？
-                            // 每次碰到头就重新开始？那得每次判断数据包里是否有头？2个包组合起来才有一个头？
-                            int readSize = networkStream.Read(bytes, 0, tcpClient.ReceiveBufferSize);
+                            IC_TCP_MESSAGE_HEADER messageHeader = default(IC_TCP_MESSAGE_HEADER);
 
-                            if (readSize == 0) break;
-
-                            if (readSize > 0)
+                            while (true)
                             {
-                                var messageResponse = base.ClientMessageRequest(new MessageRequest()
+                                try
                                 {
-                                    CommandId = "C001",
-                                    MessageGuid = System.Guid.NewGuid(),
-                                    CommandRequestJson = "{\"Message\":\"" + System.Text.Encoding.UTF8.GetString(bytes, 0, readSize) + "\"}"
-                                });
+                                    #region 把数据读到队列里
+                                    byte[] bytes = new byte[tcpClient.ReceiveBufferSize];
 
-                                var resBytes = messageResponse.SerializeToBinaryFormatter();
-                                networkStream.Write(resBytes, 0, resBytes.Length);
+                                    int readSize = networkStream.Read(bytes, 0, tcpClient.ReceiveBufferSize);
+
+                                    if (readSize == 0) break;
+
+                                    if (readSize > 0)
+                                    {
+                                        for (int i = 0; i < readSize; i++)
+                                        {
+                                            clientBufferQueue.Enqueue(bytes[i]);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region 处理队列中数据
+
+                                    // 当队列长度比定义的TCP头大的时候
+                                    if (clientBufferQueue.Count > IC_TCP_MESSAGE_HEADER.HeaderLength)
+                                    {
+                                        byte[] headerBytes = new byte[IC_TCP_MESSAGE_HEADER.HeaderLength];
+                                        // 取出消息头
+                                        for (int i = 0; i < headerBytes.Length; i++)
+                                        {
+                                            headerBytes[i] = clientBufferQueue.Dequeue();
+                                        }
+                                        messageHeader = Utils.BytesToStruct<IC_TCP_MESSAGE_HEADER>(headerBytes);
+                                    }
+
+                                    #endregion
+
+                                    #region 如果有数据长度，且 当前的 TCP 消息头已组成，则可以读取内容
+                                    if (messageHeader.DataLength > 0 && clientBufferQueue.Count >= messageHeader.DataLength)
+                                    {
+                                        byte[] messageBytes = new byte[messageHeader.DataLength];
+                                        for (int i = 0; i < messageHeader.DataLength; i++)
+                                        {
+                                            messageBytes[i] = clientBufferQueue.Dequeue();
+                                        }
+
+                                        if (messageHeader.MessageType == MessageType.Request)
+                                        {
+                                            MessageRequest messageRequest = Utils.DeserializeToObject<MessageRequest>(messageBytes);
+
+                                            var messageResponse = base.ClientMessageRequest(messageRequest);
+                                        }
+                                        else if (messageHeader.MessageType == MessageType.Response)
+                                        {
+                                            MessageResponse messageRequest = Utils.DeserializeToObject<MessageResponse>(messageBytes);
+                                        }
+                                    }
+                                    #endregion
+                                }
+                                catch (System.IO.IOException ie)
+                                {
+                                    break;
+                                    // client closed
+                                }
+                                catch (Exception e)
+                                {
+                                    break;
+                                }
                             }
                         }
-                        catch (System.IO.IOException ie)
-                        {
 
-                            break;
-                            // client closed
-                        }
-                        catch (System.ObjectDisposedException ode)
-                        {
-                            break;
-                            // client closed
-                        }
-                        catch (Exception e)
-                        {
-                            break;
-                        }
+                        base.ClientDisonnected(clientId);
                     }
-                }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Exception. " + e.Message);
+                        tcpClient.Close();
+                    }
+                });
 
-                base.ClientDisonnected(clientId);
+            }
+            //An existing connection was forcibly closed by the remote host
+            catch (System.Net.Sockets.SocketException e)
+            {
+                Console.WriteLine("Exception. " + e.Message);
             }
 
             listener.BeginAcceptTcpClient(TcpAcceptAsyncCallback, listener);

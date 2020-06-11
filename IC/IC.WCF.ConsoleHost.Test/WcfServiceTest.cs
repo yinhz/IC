@@ -1,6 +1,6 @@
-﻿using System;
-using IC.WCF.ConsoleHost.Test.ICWcfService;
+﻿using IC.WCF.Client.ICWcfService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace IC.WCF.ConsoleHost.Test
 {
@@ -24,7 +24,7 @@ namespace IC.WCF.ConsoleHost.Test
         {
             WcfCallbackSerice wcfCallbackSerice = new WcfCallbackSerice();
 
-            ICWcfService._ICWcfServiceClient client = new ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
+            Client.ICWcfService._ICWcfServiceClient client = new Client.ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
             client.RegisterClient(System.Guid.NewGuid().ToString());
 
             int index = 0;

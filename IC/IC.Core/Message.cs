@@ -6,6 +6,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace IC.Core
 {
+    public enum MessageType : byte
+    {
+        Request = 1,
+        Response = 2
+    }
+
     [Serializable]
     [DataContract]
     public class MessageRequest
@@ -25,6 +31,7 @@ namespace IC.Core
         public string CommandRequestJson { get; set; }
     }
 
+    [Serializable]
     [DataContract]
     public class MessageResponse
     {

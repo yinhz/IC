@@ -8,31 +8,27 @@ using IC.Core;
 
 namespace IC.Tcp
 {
-    [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct ICTcpMessageHead
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct IC_TCP_MESSAGE_HEADER
     {
-        public string Header;
+        public const string TokenStr = "IC.Tcp.IC_TCP_MESSAGE_HEADER";
+        public const int HeaderLength = 29;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 24)]
+        public string Token;
+        [MarshalAs(UnmanagedType.I1, SizeConst = 1)]
+        public MessageType MessageType;
+        [MarshalAs(UnmanagedType.I4, SizeConst = 4)]
         public int DataLength;
-    }
 
-    public class ICTcpMessageContent
-    {
-        public ICTcpMessageContent(object obj)
+        public static IC_TCP_MESSAGE_HEADER CreateICTcpMessageHeader(MessageType messageType, int dataLength)
         {
-            if (obj == null)
-                throw new ArgumentNullException("obj");
-            this.Data = obj.SerializeToBinaryFormatter();
-        }
-        public int DataLength => Data.Length;
-        public byte[] Data { get; set; }
-    }
-    public class ICTcpMessageContent<T> : ICTcpMessageContent
-        where T : class
-    {
-        public ICTcpMessageContent(T obj)
-            : base(obj)
-        {
-
+            return new IC_TCP_MESSAGE_HEADER()
+            {
+                Token = IC_TCP_MESSAGE_HEADER.TokenStr,
+                MessageType = messageType,
+                DataLength = dataLength
+            };
         }
     }
 }

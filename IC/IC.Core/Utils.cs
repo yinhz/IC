@@ -15,7 +15,7 @@ namespace IC.Core
         public static byte[] StructToBytes<T>(T structObj)
             where T : struct
         {
-            int size = Marshal.SizeOf(typeof(T));
+            int size = Marshal.SizeOf(structObj);
 
             byte[] bytes = new byte[size];
 
@@ -33,7 +33,7 @@ namespace IC.Core
             return bytes;
         }
 
-        public static object BytesToStruct<T>(byte[] bytes)
+        public static T BytesToStruct<T>(byte[] bytes)
             where T : struct
         {
             var structType = typeof(T);
@@ -42,8 +42,7 @@ namespace IC.Core
 
             if (size > bytes.Length)
             {
-                return null;
-
+                throw new Exception("Bytes to struct exception. Struct Size bigger than bytes argument!");
             }
 
             //分配结构体内存空间 
@@ -58,7 +57,10 @@ namespace IC.Core
             //释放内存空间 
             Marshal.FreeHGlobal(structPtr);
 
-            return obj;
+            if (obj == null)
+                throw new Exception("Bytes to struct. result is null!");
+
+            return (T)obj;
         }
 
         public static byte[] SerializeToBinaryFormatter(this object obj)

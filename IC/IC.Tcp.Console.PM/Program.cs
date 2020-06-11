@@ -1,22 +1,11 @@
-﻿using IC.WCF.Client.ICWcfService;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace IC.WCF.ConsoleHost.PM
+namespace IC.Tcp.Console.PM
 {
-    public class WcfCallbackSerice : _ICWcfServiceCallback
-    {
-        public MessageResponse SendMessageToClient(MessageRequest messageRequest)
-        {
-            Console.WriteLine("Received from server. MessageRequest : " + messageRequest.MessageGuid);
-            return new MessageResponse()
-            {
-                MessageGuid = messageRequest.MessageGuid,
-                CommandResponseJson = "I an response for server request. MessageGuid : " + messageRequest.MessageGuid
-            };
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
@@ -47,7 +36,7 @@ namespace IC.WCF.ConsoleHost.PM
                     {
                         WcfCallbackSerice wcfCallbackSerice = new WcfCallbackSerice();
 
-                        wcfCallbackSerices[i] = new Client.ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
+                        wcfCallbackSerices[i] = new ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
                         wcfCallbackSerices[i].RegisterClient(System.Guid.NewGuid().ToString());
                     }
 
@@ -66,30 +55,9 @@ namespace IC.WCF.ConsoleHost.PM
                     });
                     for (int i = 0; i < clientCount; i++)
                     {
-                        //wcfCallbackSerices[i].Close();
+                        wcfCallbackSerices[i].Close();
                     }
-
-                    //Parallel.For(0, clientCount, new ParallelOptions() { MaxDegreeOfParallelism = clientCount }, (i) =>
-                    //{
-                    //    WcfCallbackSerice wcfCallbackSerice = new WcfCallbackSerice();
-
-                    //    ICWcfService._ICWcfServiceClient client = new ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
-                    //    client.RegisterClient(System.Guid.NewGuid().ToString());
-
-                    //    System.Threading.Tasks.Parallel.For(0, messageCount, new ParallelOptions() { MaxDegreeOfParallelism = messageCount }, (j) =>
-                    //    {
-                    //        client.SendMessage(new MessageRequest()
-                    //        {
-                    //            CommandId = "C001",
-                    //            MessageGuid = System.Guid.NewGuid(),
-                    //            RequestDate = DateTime.Now,
-                    //            CommandRequestJson = "{\"EquipmentCode\":\"" + j.ToString() + "\"}"
-                    //        });
-                    //    });
-
-                    //    client.Close();
-                    //});
-
+                    
                     stopwatch.Stop();
 
                     Console.WriteLine("Test End." + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss fffff") + ".");

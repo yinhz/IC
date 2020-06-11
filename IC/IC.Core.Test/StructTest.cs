@@ -11,28 +11,24 @@ namespace IC.Core.Test
         [TestMethod]
         public void TestMethod1()
         {
+            IC_TCP_MESSAGE_HEADER messageHeader = default(IC_TCP_MESSAGE_HEADER);
+            MessageRequest messageRequest = new MessageRequest() { CommandId = "Cxcyadsfnqwerjalxcvasdfsadf8" };
 
-            MessageRequest messageRequest = new MessageRequest() { CommandId = "C008" };
+            IC_TCP_MESSAGE_HEADER header = IC_TCP_MESSAGE_HEADER.CreateICTcpMessageHeader(MessageType.Request, int.MaxValue);
 
-            ICTcpMessageContent content = new ICTcpMessageContent(messageRequest);
+            var bytes = Utils.StructToBytes( header);
 
-            ICTcpMessageHeadStruct structObj = new ICTcpMessageHeadStruct()
-            {
-                Header = typeof(ICTcpMessageContent).FullName,
-                DataLength = content.DataLength
-            };
+            var x = Utils.BytesToStruct<IC_TCP_MESSAGE_HEADER>(bytes);
 
-            var bytes = Utils.StructToBytes<ICTcpMessageHeadStruct>(structObj);
+            //ICTcpHeaderStruct structObj = new ICTcpHeaderStruct()
+            //{
+            //    Header = typeof(ICTcpMessageContent).FullName,
+            //    DataLength = content.DataLength
+            //};
 
-            var o1 = Utils.BytesToStruct<ICTcpMessageHeadStruct>(bytes);
+            //var bytes = Utils.StructToBytes<ICTcpHeaderStruct>(structObj);
+
+            //var o1 = Utils.BytesToStruct<ICTcpHeaderStruct>(bytes);
         }
     }
-
-    [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct ICTcpMessageHeadStruct
-    {
-        public string Header;
-        public int DataLength;
-    }
-
 }

@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{350AFAA5-D59C-450C-A26F-8AA8B820D06A}</ProjectGuid>
+    <ProjectGuid>{C7164D53-5C27-4B8D-B145-E180EDF40CFA}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>IC.WCF.ConsoleHost.PM</RootNamespace>
-    <AssemblyName>IC.WCF.ConsoleHost.PM</AssemblyName>
+    <RootNamespace>IC.Tcp.Console.PM</RootNamespace>
+    <AssemblyName>IC.Tcp.Console.PM</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,8 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,18 +47,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\IC.WCF.Client\app.config">
-      <Link>app.config</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IC.WCF.Client\IC.WCF.Client.csproj">
-      <Project>{8da52f22-e4f6-4200-9e90-b5be5908d164}</Project>
-      <Name>IC.WCF.Client</Name>
-    </ProjectReference>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
