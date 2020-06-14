@@ -60,6 +60,10 @@
       <Project>{6ec9a3d9-f701-4790-9820-2a96ed4b03fc}</Project>
       <Name>IC.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IC.Tcp.Client\IC.Tcp.Client.csproj">
+      <Project>{8e8d9f4f-802f-4c63-b52e-92c79a0d0eda}</Project>
+      <Name>IC.Tcp.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IC.Tcp\IC.Tcp.csproj">
       <Project>{0967218c-73fd-426e-aed7-718151bb6894}</Project>
       <Name>IC.Tcp</Name>

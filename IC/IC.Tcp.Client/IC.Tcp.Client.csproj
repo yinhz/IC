@@ -49,6 +49,10 @@
       <Project>{6ec9a3d9-f701-4790-9820-2a96ed4b03fc}</Project>
       <Name>IC.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IC.Tcp\IC.Tcp.csproj">
+      <Project>{0967218c-73fd-426e-aed7-718151bb6894}</Project>
+      <Name>IC.Tcp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

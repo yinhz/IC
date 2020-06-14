@@ -39,7 +39,7 @@ namespace IC.WCF
                 this.ClientDisonnected(clientId);
             };
 
-            base.ClientConnect(new Client(clientId, connection));
+            base.ClientConnect(new ICServerClient(clientId, connection));
         }
 
         public MessageResponse SendMessage(MessageRequest messageRequest)

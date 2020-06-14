@@ -9,227 +9,17 @@
 //------------------------------------------------------------------------------
 
 namespace IC.WCF.Client.ICWcfService {
-    using System.Runtime.Serialization;
-    using System;
     
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MessageRequest", Namespace="http://schemas.datacontract.org/2004/07/IC.Core")]
-    [System.SerializableAttribute()]
-    public partial class MessageRequest : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        private string CommandIdField;
-        
-        private string CommandRequestJsonField;
-        
-        private System.Guid MessageGuidField;
-        
-        private System.DateTime RequestDateField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string CommandId {
-            get {
-                return this.CommandIdField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.CommandIdField, value) != true)) {
-                    this.CommandIdField = value;
-                    this.RaisePropertyChanged("CommandId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string CommandRequestJson {
-            get {
-                return this.CommandRequestJsonField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.CommandRequestJsonField, value) != true)) {
-                    this.CommandRequestJsonField = value;
-                    this.RaisePropertyChanged("CommandRequestJson");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid MessageGuid {
-            get {
-                return this.MessageGuidField;
-            }
-            set {
-                if ((this.MessageGuidField.Equals(value) != true)) {
-                    this.MessageGuidField = value;
-                    this.RaisePropertyChanged("MessageGuid");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.DateTime RequestDate {
-            get {
-                return this.RequestDateField;
-            }
-            set {
-                if ((this.RequestDateField.Equals(value) != true)) {
-                    this.RequestDateField = value;
-                    this.RaisePropertyChanged("RequestDate");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MessageResponse", Namespace="http://schemas.datacontract.org/2004/07/IC.Core")]
-    [System.SerializableAttribute()]
-    public partial class MessageResponse : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        private string CommandResponseJsonField;
-        
-        private string ErrorCodeField;
-        
-        private string ErrorMessageField;
-        
-        private System.Guid MessageGuidField;
-        
-        private System.DateTime ResponseDateField;
-        
-        private bool SuccessField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string CommandResponseJson {
-            get {
-                return this.CommandResponseJsonField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.CommandResponseJsonField, value) != true)) {
-                    this.CommandResponseJsonField = value;
-                    this.RaisePropertyChanged("CommandResponseJson");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string ErrorCode {
-            get {
-                return this.ErrorCodeField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ErrorCodeField, value) != true)) {
-                    this.ErrorCodeField = value;
-                    this.RaisePropertyChanged("ErrorCode");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string ErrorMessage {
-            get {
-                return this.ErrorMessageField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ErrorMessageField, value) != true)) {
-                    this.ErrorMessageField = value;
-                    this.RaisePropertyChanged("ErrorMessage");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid MessageGuid {
-            get {
-                return this.MessageGuidField;
-            }
-            set {
-                if ((this.MessageGuidField.Equals(value) != true)) {
-                    this.MessageGuidField = value;
-                    this.RaisePropertyChanged("MessageGuid");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.DateTime ResponseDate {
-            get {
-                return this.ResponseDateField;
-            }
-            set {
-                if ((this.ResponseDateField.Equals(value) != true)) {
-                    this.ResponseDateField = value;
-                    this.RaisePropertyChanged("ResponseDate");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public bool Success {
-            get {
-                return this.SuccessField;
-            }
-            set {
-                if ((this.SuccessField.Equals(value) != true)) {
-                    this.SuccessField = value;
-                    this.RaisePropertyChanged("Success");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ICWcfService._ICWcfService", CallbackContract=typeof(IC.WCF.Client.ICWcfService._ICWcfServiceCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
-    public interface _ICWcfService {
+    internal interface _ICWcfService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/_ICWcfService/SendMessage", ReplyAction="http://tempuri.org/_ICWcfService/SendMessageResponse")]
-        IC.WCF.Client.ICWcfService.MessageResponse SendMessage(IC.WCF.Client.ICWcfService.MessageRequest messageRequest);
+        IC.Core.MessageResponse SendMessage(IC.Core.MessageRequest messageRequest);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/_ICWcfService/SendMessage", ReplyAction="http://tempuri.org/_ICWcfService/SendMessageResponse")]
-        System.Threading.Tasks.Task<IC.WCF.Client.ICWcfService.MessageResponse> SendMessageAsync(IC.WCF.Client.ICWcfService.MessageRequest messageRequest);
+        System.Threading.Tasks.Task<IC.Core.MessageResponse> SendMessageAsync(IC.Core.MessageRequest messageRequest);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/_ICWcfService/RegisterClient", ReplyAction="http://tempuri.org/_ICWcfService/RegisterClientResponse")]
         void RegisterClient(string clientId);
@@ -239,19 +29,19 @@ namespace IC.WCF.Client.ICWcfService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface _ICWcfServiceCallback {
+    internal interface _ICWcfServiceCallback {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/_ICWcfService/SendMessageToClient", ReplyAction="http://tempuri.org/_ICWcfService/SendMessageToClientResponse")]
-        IC.WCF.Client.ICWcfService.MessageResponse SendMessageToClient(IC.WCF.Client.ICWcfService.MessageRequest messageRequest);
+        IC.Core.MessageResponse SendMessageToClient(IC.Core.MessageRequest messageRequest);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface _ICWcfServiceChannel : IC.WCF.Client.ICWcfService._ICWcfService, System.ServiceModel.IClientChannel {
+    internal interface _ICWcfServiceChannel : IC.WCF.Client.ICWcfService._ICWcfService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class _ICWcfServiceClient : System.ServiceModel.DuplexClientBase<IC.WCF.Client.ICWcfService._ICWcfService>, IC.WCF.Client.ICWcfService._ICWcfService {
+    internal partial class _ICWcfServiceClient : System.ServiceModel.DuplexClientBase<IC.WCF.Client.ICWcfService._ICWcfService>, IC.WCF.Client.ICWcfService._ICWcfService {
         
         public _ICWcfServiceClient(System.ServiceModel.InstanceContext callbackInstance) : 
                 base(callbackInstance) {
@@ -273,11 +63,11 @@ namespace IC.WCF.Client.ICWcfService {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public IC.WCF.Client.ICWcfService.MessageResponse SendMessage(IC.WCF.Client.ICWcfService.MessageRequest messageRequest) {
+        public IC.Core.MessageResponse SendMessage(IC.Core.MessageRequest messageRequest) {
             return base.Channel.SendMessage(messageRequest);
         }
         
-        public System.Threading.Tasks.Task<IC.WCF.Client.ICWcfService.MessageResponse> SendMessageAsync(IC.WCF.Client.ICWcfService.MessageRequest messageRequest) {
+        public System.Threading.Tasks.Task<IC.Core.MessageResponse> SendMessageAsync(IC.Core.MessageRequest messageRequest) {
             return base.Channel.SendMessageAsync(messageRequest);
         }
         

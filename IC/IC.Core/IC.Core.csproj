@@ -54,11 +54,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommunicationState.cs" />
     <Compile Include="CommandProcessorDescription.cs" />
     <Compile Include="CommandProcessor.cs" />
-    <Compile Include="ICClient.cs" />
+    <Compile Include="ICServerClient.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="ICClient.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="ICServer.cs" />
     <Compile Include="Utils.cs" />

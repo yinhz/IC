@@ -12,14 +12,7 @@ namespace IC.Tcp.ConsoleHost
         static void Main(string[] args)
         {
             IC.Tcp.ICTcpServer server = new ICTcpServer();
-
-            server.OnDataReceived = (bytes, message) =>
-            {
-                System.Console.WriteLine("bytes length : " + bytes.Length);
-
-                //System.Console.WriteLine("Received from client : " + message);
-            };
-
+            
             server.OnClientConnected += (s, e) =>
             {
                 // 记录到数据库，记录 ClientId 和 机器信息

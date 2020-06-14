@@ -13,8 +13,8 @@ namespace IC.Core
     {
         #region Client
 
-        ClientConcurrentDictionary Clients { get; set; }
-        void ClientConnect(IClient client);
+        ICServerClientConcurrentDictionary Clients { get; set; }
+        void ClientConnect(_ICServerClient client);
         void ClientDisonnected(string clientId);
 
         #endregion
@@ -56,7 +56,7 @@ namespace IC.Core
 
         public ICServer()
         {
-            this.Clients = new ClientConcurrentDictionary();
+            this.Clients = new ICServerClientConcurrentDictionary();
             this.CommandProcessorTypes = new ConcurrentDictionary<string, Type>();
             // 默认加载程序中所有 processor
             this.LoadCommandProcessors();
@@ -66,9 +66,9 @@ namespace IC.Core
 
         #region Client
 
-        public ClientConcurrentDictionary Clients { get; set; }
+        public ICServerClientConcurrentDictionary Clients { get; set; }
 
-        public void ClientConnect(IClient client)
+        public void ClientConnect(_ICServerClient client)
         {
             this.OnClientConnect?.Invoke(this, new ClientConnectedEventArgs(client));
 
@@ -88,13 +88,13 @@ namespace IC.Core
 
         public void ClientDisonnected(string clientId)
         {
-            this.OnClientDisconnect?.Invoke(this, new ClientDisonnectedEventArgs(new Client(clientId, null)));
+            this.OnClientDisconnect?.Invoke(this, new ClientDisonnectedEventArgs(new ICServerClient(clientId, null)));
 
             while (true)
             {
                 if (!this.Clients.ContainsKey(clientId)) break;
 
-                IClient existedClient = null;
+                _ICServerClient existedClient = null;
                 if (this.Clients.TryRemove(clientId, out existedClient))
                 {
                     this.OnClientDisconnected?.Invoke(this, new ClientDisonnectedEventArgs(existedClient));
@@ -217,9 +217,9 @@ namespace IC.Core
 
     public class ClientConnectEventArgs : EventArgs
     {
-        public IClient Client { get; private set; }
+        public _ICServerClient Client { get; private set; }
 
-        public ClientConnectEventArgs(IClient client)
+        public ClientConnectEventArgs(_ICServerClient client)
         {
             this.Client = client;
         }
@@ -227,7 +227,7 @@ namespace IC.Core
 
     public class ClientConnectedEventArgs : ClientConnectEventArgs
     {
-        public ClientConnectedEventArgs(IClient client)
+        public ClientConnectedEventArgs(_ICServerClient client)
             : base(client)
         {
         }
@@ -235,9 +235,9 @@ namespace IC.Core
 
     public class ClientDisonnectEventArgs : EventArgs
     {
-        public IClient Client { get; private set; }
+        public _ICServerClient Client { get; private set; }
 
-        public ClientDisonnectEventArgs(IClient client)
+        public ClientDisonnectEventArgs(_ICServerClient client)
         {
             this.Client = client;
         }
@@ -245,7 +245,7 @@ namespace IC.Core
 
     public class ClientDisonnectedEventArgs : ClientDisonnectEventArgs
     {
-        public ClientDisonnectedEventArgs(IClient client)
+        public ClientDisonnectedEventArgs(_ICServerClient client)
             : base(client)
         {
         }

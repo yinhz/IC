@@ -12,7 +12,42 @@ namespace IC.Core
 {
     public static class Utils
     {
-        public static byte[] StructToBytes<T>(T structObj)
+        #region Bytes <> String
+        public static byte[] ToBytes(this string str, System.Text.Encoding encoding) => encoding.GetBytes(str);
+        public static byte[] ToBytes(this string str) => str.JsonToBytes(System.Text.Encoding.UTF8);
+        public static string BytesToString(this byte[] bytes, System.Text.Encoding encoding) => encoding.GetString(bytes);
+        public static string BytesToString(this byte[] bytes) => bytes.ToJson(System.Text.Encoding.UTF8);
+        public static string BytesToString(this IEnumerable<byte> bytes, System.Text.Encoding encoding) => bytes.ToArray().BytesToString();
+        public static string BytesToString(this IEnumerable<byte> bytes) => bytes.BytesToString(System.Text.Encoding.UTF8);
+        #endregion
+
+        #region Object <> Json
+
+        public static string ToJson<T>(this T obj)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+        }
+
+        public static T JsonToObject<T>(string json)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+        }
+
+        #endregion
+
+        #region Json <> Bytes
+
+        public static byte[] JsonToBytes(this string str, System.Text.Encoding encoding) => encoding.GetBytes(str);
+        public static byte[] JsonToBytes(this string str) => str.JsonToBytes(System.Text.Encoding.UTF8);
+
+        public static string ToJson(this byte[] bytes, System.Text.Encoding encoding) => encoding.GetString(bytes);
+        public static string ToJson(this byte[] bytes) => bytes.ToJson(System.Text.Encoding.UTF8);
+
+        #endregion
+
+        #region Struct <> Bytes
+
+        public static byte[] StructToBytes<T>(this T structObj)
             where T : struct
         {
             int size = Marshal.SizeOf(structObj);
@@ -63,6 +98,10 @@ namespace IC.Core
             return (T)obj;
         }
 
+        #endregion
+
+        #region Object ([Serializable]) <> Binary
+
         public static byte[] SerializeToBinaryFormatter(this object obj)
         {
             if (obj == null)
@@ -109,5 +148,7 @@ namespace IC.Core
                 return new BinaryFormatter().Deserialize(gZipStream);
             }
         }
+
+        #endregion
     }
 }

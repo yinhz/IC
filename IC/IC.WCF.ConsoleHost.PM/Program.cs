@@ -1,22 +1,11 @@
-﻿using IC.WCF.Client.ICWcfService;
+﻿using IC.Core;
+using IC.WCF.Client;
+using IC.WCF.Client.ICWcfService;
 using System;
 using System.Threading.Tasks;
 
 namespace IC.WCF.ConsoleHost.PM
 {
-    public class WcfCallbackSerice : _ICWcfServiceCallback
-    {
-        public MessageResponse SendMessageToClient(MessageRequest messageRequest)
-        {
-            Console.WriteLine("Received from server. MessageRequest : " + messageRequest.MessageGuid);
-            return new MessageResponse()
-            {
-                MessageGuid = messageRequest.MessageGuid,
-                CommandResponseJson = "I an response for server request. MessageGuid : " + messageRequest.MessageGuid
-            };
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
@@ -42,20 +31,28 @@ namespace IC.WCF.ConsoleHost.PM
 
                     stopwatch.Start();
 
-                    _ICWcfServiceClient[] wcfCallbackSerices = new _ICWcfServiceClient[clientCount];
+                    ICClient[] wcfClients = new ICWcfClient[clientCount];
                     for (int i = 0; i < clientCount; i++)
                     {
-                        WcfCallbackSerice wcfCallbackSerice = new WcfCallbackSerice();
-
-                        wcfCallbackSerices[i] = new Client.ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
-                        wcfCallbackSerices[i].RegisterClient(System.Guid.NewGuid().ToString());
+                        wcfClients[i] = new ICWcfClient(
+                            System.Guid.NewGuid().ToString(),
+                            (messageRequest) =>
+                            {
+                                Console.WriteLine("Received from server. MessageRequest : " + messageRequest.MessageGuid);
+                                return new MessageResponse()
+                                {
+                                    MessageGuid = messageRequest.MessageGuid,
+                                    CommandResponseJson = "I an response for server request. MessageGuid : " + messageRequest.MessageGuid
+                                };
+                            }
+                            );
                     }
 
                     System.Threading.Tasks.Parallel.For(0, messageCount, new ParallelOptions() { MaxDegreeOfParallelism = messageCount }, (j) =>
                     {
                         System.Threading.Tasks.Parallel.For(0, clientCount, (i) =>
                         {
-                            wcfCallbackSerices[i].SendMessage(new MessageRequest()
+                            wcfClients[i].SendMessage(new MessageRequest()
                             {
                                 CommandId = "C001",
                                 MessageGuid = System.Guid.NewGuid(),
@@ -66,15 +63,23 @@ namespace IC.WCF.ConsoleHost.PM
                     });
                     for (int i = 0; i < clientCount; i++)
                     {
-                        //wcfCallbackSerices[i].Close();
+                        wcfClients[i].Close();
                     }
 
                     //Parallel.For(0, clientCount, new ParallelOptions() { MaxDegreeOfParallelism = clientCount }, (i) =>
                     //{
-                    //    WcfCallbackSerice wcfCallbackSerice = new WcfCallbackSerice();
-
-                    //    ICWcfService._ICWcfServiceClient client = new ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
-                    //    client.RegisterClient(System.Guid.NewGuid().ToString());
+                    //    ICWcfClient client = new ICWcfClient(
+                    //        (messageRequest) =>
+                    //        {
+                    //            Console.WriteLine("Received from server. MessageRequest : " + messageRequest.MessageGuid);
+                    //            return new MessageResponse()
+                    //            {
+                    //                MessageGuid = messageRequest.MessageGuid,
+                    //                CommandResponseJson = "I an response for server request. MessageGuid : " + messageRequest.MessageGuid
+                    //            };
+                    //        }
+                    //        );
+                    //    client.Register(System.Guid.NewGuid().ToString());
 
                     //    System.Threading.Tasks.Parallel.For(0, messageCount, new ParallelOptions() { MaxDegreeOfParallelism = messageCount }, (j) =>
                     //    {

@@ -1,88 +1,160 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace IC.Core
 {
-    public interface IClient : IDisposable
+    public delegate MessageResponse MessageReceivedDelegate(MessageRequest messageRequest);
+
+    public abstract class ICClient
     {
-        string ClientId { get; }
-
-        string SessionId { get; }
-        IConnection Connection { get; }
-        MessageResponse SendMessageToClient(MessageRequest messageRequest);
-
-        void Close();
-    }
-    
-    public class Client : IClient
-    {
-        public Client(string clientId, IConnection connection)
+        public ICClient(string clientId, MessageReceivedDelegate messageReceived)
         {
-            if (string.IsNullOrEmpty(clientId))
-                throw new ArgumentNullException("clientId");
+            if (messageReceived == null)
+                throw new ArgumentNullException("messageReceived");
 
-            if (connection == null)
-                throw new ArgumentNullException("connection");
-
-            this.ClientId = clientId;
-            this.Connection = connection;
-        }
-        
-        public override int GetHashCode()
-        {
-            return ("Client" + this.ClientId.ToString()).GetHashCode();
+            this.CommunicationState = CommunicationState.Created;
+            this.MessageReceived = messageReceived;
+            this.clientId = clientId;
         }
 
-        public override bool Equals(object obj)
+        protected string clientId;
+        public bool Registered { get; protected set; } = false;
+
+        private object opening_lock = new object();
+
+        private CommunicationState communicationState;
+        public CommunicationState CommunicationState
         {
-            if (obj == null) return false;
-
-            var other = obj as Client;
-
-            return this.ClientId == other.ClientId;
+            get
+            {
+                return communicationState;
+            }
+            protected set
+            {
+                communicationState = value;
+                StateChanged?.Invoke(communicationState, null);
+            }
         }
-        
-        public IConnection Connection { get; private set; }
+        public MessageReceivedDelegate MessageReceived { get; private set; }
 
-        public string ClientId { get; private set; }
+        public event EventHandler OnOpening;
+        public event EventHandler OnOpenFailed;
+        public event EventHandler StateChanged;
 
-        public string SessionId => this.Connection?.SessionId;
+        /// <summary>
+        /// Reset will be called when open failed
+        /// </summary>
+        protected abstract void Reset();
 
-        public void Close()
+        protected virtual void Open()
         {
-            this.Connection?.Close();
+            this.Reset();
+            this.DoOpen();
+            this.Register();
+        }
+        protected abstract void DoOpen();
+
+        public abstract void Dispose();
+
+        public virtual void Register()
+        {
+            this.DoRegister();
+            this.Registered = true;
         }
 
-        public void Dispose()
+        private void OperationEnsure()
         {
-            this.Close();
+            EnsureConnection();
+
+            EnsureRegistered();
         }
 
-        public MessageResponse SendMessageToClient(MessageRequest message)
+        private void EnsureConnection()
         {
-            return this.Connection.SendMessageToClient(message);
+            if (this.CommunicationState == CommunicationState.Opened)
+                return;
+
+            // 避免重复 open
+            lock (this.opening_lock)
+            {
+                while (true)
+                {
+                    // 并发调用发送时，可能有多个线程在打开，锁定解除后可能已经打开，因此在判断一次
+                    if (this.CommunicationState == CommunicationState.Opened)
+                        break;
+
+                    OnOpening?.Invoke(this, new EventArgs());
+
+                    try
+                    {
+                        this.CommunicationState = CommunicationState.Opening;
+                        this.Open();
+                        this.CommunicationState = CommunicationState.Opened;
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        this.CommunicationState = CommunicationState.Closing;
+                        this.Close();
+                        this.CommunicationState = CommunicationState.Closed;
+
+                        OnOpenFailed?.Invoke(e, null);
+
+                        this.Reset();
+
+                        System.Threading.Thread.Sleep(100);
+                    }
+                }
+            }
         }
 
-        public bool Equals(Client x, Client y)
+        private void EnsureRegistered()
         {
-            if (x == null || y == null) return false;
-            return x?.ClientId == y?.ClientId;
+            if (!Registered)
+                throw new Exception("You need register first!");
         }
 
-        public int GetHashCode(Client obj)
+        public virtual MessageResponse SendMessage(MessageRequest messageRequest)
         {
-            return obj.GetHashCode();
+            do
+            {
+                this.OperationEnsure();
+                try
+                {
+                    return this.DoSendMessage(messageRequest);
+                }
+                catch (Exception e)
+                {
+                    this.CommunicationState = CommunicationState.Faulted;
+                }
+                System.Threading.Thread.Sleep(500);
+            }
+            while (true);
         }
-    }
+        public virtual Task<MessageResponse> SendMessageAsync(MessageRequest messageRequest)
+        {
+            do
+            {
+                this.OperationEnsure();
+                try
+                {
+                    return this.DoSendMessageAsync(messageRequest);
+                }
+                catch (Exception e)
+                {
+                    this.CommunicationState = CommunicationState.Faulted;
+                }
+                System.Threading.Thread.Sleep(500);
+            }
+            while (true);
+        }
 
-    public class ClientConcurrentDictionary : ConcurrentDictionary<string, IClient>
-    {
-        public IClient GetClient(string clientId)
-        {
-            return this[clientId];
-        }
+        public abstract void Close();
+
+        protected abstract MessageResponse DoSendMessage(MessageRequest messageRequest);
+
+        protected abstract Task<MessageResponse> DoSendMessageAsync(MessageRequest messageRequest);
+
+        protected abstract void DoRegister();
     }
 }

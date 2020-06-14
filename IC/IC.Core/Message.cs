@@ -11,6 +11,11 @@ namespace IC.Core
         Request = 1,
         Response = 2
     }
+    public enum MessageFormat : byte
+    {
+        Binary = 1,
+        Json = 2
+    }
 
     [Serializable]
     [DataContract]
@@ -56,19 +61,37 @@ namespace IC.Core
 
     public static class MessageUtils
     {
+        public static string ToJson(this MessageRequest messageRequest)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(messageRequest);
+        }
+        public static MessageRequest FromMessageRequestJson(string messageRequestJson)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<MessageRequest>(messageRequestJson);
+        }
+        public static string ToJson(this MessageResponse messageResponse)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(messageResponse);
+        }
+        public static MessageResponse FromMessageResponseJson(string messageResponseJson)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<MessageResponse>(messageResponseJson);
+        }
+
         public static byte[] ToBinaryFormatter(this MessageRequest messageRequest)
         {
             return messageRequest.SerializeToBinaryFormatter();
         }
 
-        public static MessageRequest FromBinaryFormatter(byte[] bytes)
+        public static T FromBinaryFormatter<T>(byte[] bytes)
+            where T : class
         {
             var obj = Utils.DeserializeToObject(bytes);
 
-            if (obj == null || !(obj is MessageRequest))
+            if (obj == null || !(obj is T))
                 throw new SerializationException();
 
-            return obj as MessageRequest;
+            return (T)obj;
         }
     }
 }

@@ -21,9 +21,6 @@ namespace IC.Tcp
     {
         public System.Collections.Concurrent.ConcurrentBag<TcpClient> tcpClients = new System.Collections.Concurrent.ConcurrentBag<TcpClient>();
 
-        public delegate void DataReceivedDelegate(byte[] bytes, string message);
-        public DataReceivedDelegate OnDataReceived;
-
         public ICTcpServer()
         {
 
@@ -51,11 +48,11 @@ namespace IC.Tcp
                     {
                         string clientId = System.Guid.NewGuid().ToString();
 
-                        base.ClientConnect(new Client(clientId, new ICTcpConnection(tcpClient) { }));
+                        base.ClientConnect(new ICServerClient(clientId, new ICTcpConnection(tcpClient) { }));
 
                         using (var networkStream = tcpClient.GetStream())
                         {
-                            var clientBufferQueue = new System.Collections.Generic.Queue<byte>();
+                            List<byte> clientBufferList = new List<byte>();
 
                             IC_TCP_MESSAGE_HEADER messageHeader = default(IC_TCP_MESSAGE_HEADER);
 
@@ -63,7 +60,7 @@ namespace IC.Tcp
                             {
                                 try
                                 {
-                                    #region 把数据读到队列里
+                                    #region 把数据读到集合里
                                     byte[] bytes = new byte[tcpClient.ReceiveBufferSize];
 
                                     int readSize = networkStream.Read(bytes, 0, tcpClient.ReceiveBufferSize);
@@ -72,49 +69,86 @@ namespace IC.Tcp
 
                                     if (readSize > 0)
                                     {
-                                        for (int i = 0; i < readSize; i++)
-                                        {
-                                            clientBufferQueue.Enqueue(bytes[i]);
-                                        }
+                                        clientBufferList.AddRange(bytes.Take(readSize));
                                     }
                                     #endregion
 
                                     #region 处理队列中数据
 
                                     // 当队列长度比定义的TCP头大的时候
-                                    if (clientBufferQueue.Count > IC_TCP_MESSAGE_HEADER.HeaderLength)
+                                    if (clientBufferList.Count > IC_TCP_MESSAGE_HEADER.HeaderLength)
                                     {
                                         byte[] headerBytes = new byte[IC_TCP_MESSAGE_HEADER.HeaderLength];
                                         // 取出消息头
                                         for (int i = 0; i < headerBytes.Length; i++)
                                         {
-                                            headerBytes[i] = clientBufferQueue.Dequeue();
+                                            headerBytes[i] = clientBufferList[i];
                                         }
+                                        clientBufferList.RemoveRange(0, headerBytes.Length);
                                         messageHeader = Utils.BytesToStruct<IC_TCP_MESSAGE_HEADER>(headerBytes);
                                     }
 
                                     #endregion
 
                                     #region 如果有数据长度，且 当前的 TCP 消息头已组成，则可以读取内容
-                                    if (messageHeader.DataLength > 0 && clientBufferQueue.Count >= messageHeader.DataLength)
+                                    // to-do , 这中间出现问题如何处理？？
+                                    // 字节数够了，但是 消息匹配不上，比如结尾校验没通过？
+                                    if (messageHeader.DataLength > 0 && clientBufferList.Count >= (messageHeader.DataLength + IC_TCP_MESSAGE_HEADER.IC_TCP_MESSAGE_END_TOKEN_LENGTH))
                                     {
+                                        #region 数据一致性校验，偏移数据长度后取结尾 IC_TCP_MESSAGE_END_TOKEN_LENGTH 长度，转换字符后应该是 结束标记
+                                        string endToken = clientBufferList.Skip(messageHeader.DataLength).Take(IC_TCP_MESSAGE_HEADER.IC_TCP_MESSAGE_END_TOKEN_LENGTH).BytesToString();
+                                        if (endToken != IC_TCP_MESSAGE_HEADER.EndTokenStr)
+                                        {
+                                            // 如果一段时间内没匹配上？不会存在一段时间问题，要么客户端断开，要么字节会一直发送，这边有读取。
+                                            // 匹配不上，放弃本次处理？// 断开客户端？
+                                            // 为啥会匹配不上？? 
+                                            // 匹配不上移除消息？？
+                                            goto RemoveCurrentMessage;
+                                            throw new Exception("Dont match end token!");
+                                        }
+                                        #endregion
+
+                                        #region 获取 实际消息字节
                                         byte[] messageBytes = new byte[messageHeader.DataLength];
                                         for (int i = 0; i < messageHeader.DataLength; i++)
                                         {
-                                            messageBytes[i] = clientBufferQueue.Dequeue();
+                                            messageBytes[i] = clientBufferList[i];
                                         }
+                                        #endregion
 
-                                        if (messageHeader.MessageType == MessageType.Request)
+                                        #region 开始处理收到的消息
+                                        try
                                         {
-                                            MessageRequest messageRequest = Utils.DeserializeToObject<MessageRequest>(messageBytes);
+                                            if (messageHeader.MessageType == MessageType.Request)
+                                            {
+                                                MessageRequest messageRequest = null;
 
-                                            var messageResponse = base.ClientMessageRequest(messageRequest);
+                                                if (messageHeader.MessageFormat == MessageFormat.Binary)
+                                                    messageRequest = Utils.DeserializeToObject<MessageRequest>(messageBytes);
+                                                else if (messageHeader.MessageFormat == MessageFormat.Json)
+                                                    messageRequest = MessageUtils.FromMessageRequestJson(messageBytes.ToJson());
+
+                                                var messageResponse = base.ClientMessageRequest(messageRequest);
+                                            }
+                                            else if (messageHeader.MessageType == MessageType.Response)
+                                            {
+                                                MessageResponse messageRequest = Utils.DeserializeToObject<MessageResponse>(messageBytes);
+                                            }
                                         }
-                                        else if (messageHeader.MessageType == MessageType.Response)
+                                        catch (Exception)
                                         {
-                                            MessageResponse messageRequest = Utils.DeserializeToObject<MessageResponse>(messageBytes);
+                                            // to-do 消息解析失败？
+                                            goto RemoveCurrentMessage;
+                                            // to-do 消息处理失败？ 消息处理不会失败，ClientMessageRequest 永远会有 try catch.
+                                            throw;
                                         }
+                                        #endregion
+
+                                        // 获取完成移除 客户端消息缓冲区数据
+                                        RemoveCurrentMessage:
+                                        clientBufferList.RemoveRange(0, messageHeader.DataLength + IC_TCP_MESSAGE_HEADER.IC_TCP_MESSAGE_END_TOKEN_LENGTH);
                                     }
+
                                     #endregion
                                 }
                                 catch (System.IO.IOException ie)

@@ -1,31 +1,29 @@
-﻿using IC.WCF.Client.ICWcfService;
+﻿using IC.Core;
+using IC.WCF.Client;
+using IC.WCF.Client.ICWcfService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace IC.WCF.ConsoleHost.Test
 {
-    public class WcfCallbackSerice : _ICWcfServiceCallback
-    {
-        public MessageResponse SendMessageToClient(MessageRequest messageRequest)
-        {
-            Console.WriteLine("Received from server. MessageRequest : " + Newtonsoft.Json.JsonConvert.SerializeObject(messageRequest));
-            return new MessageResponse()
-            {
-                MessageGuid = messageRequest.MessageGuid,
-                CommandResponseJson = "I an response for server request. MessageGuid : " + messageRequest.MessageGuid
-            };
-        }
-    }
     [TestClass]
     public class WcfServiceTest
     {
         [TestMethod]
         public void TestMethod1()
         {
-            WcfCallbackSerice wcfCallbackSerice = new WcfCallbackSerice();
-
-            Client.ICWcfService._ICWcfServiceClient client = new Client.ICWcfService._ICWcfServiceClient(new System.ServiceModel.InstanceContext(wcfCallbackSerice));
-            client.RegisterClient(System.Guid.NewGuid().ToString());
+            ICClient client = new ICWcfClient(
+                System.Guid.NewGuid().ToString(),
+                (messageRequest) =>
+                {
+                    System.Diagnostics.Debug.WriteLine("Received from server. MessageRequest : " + Newtonsoft.Json.JsonConvert.SerializeObject(messageRequest));
+                    return new MessageResponse()
+                    {
+                        MessageGuid = messageRequest.MessageGuid,
+                        CommandResponseJson = "I am response for server request. MessageGuid : " + messageRequest.MessageGuid
+                    };
+                }
+                );
 
             int index = 0;
 
@@ -35,13 +33,19 @@ namespace IC.WCF.ConsoleHost.Test
                 {
                     index = System.Threading.Interlocked.Add(ref index, 1);
 
-                    client.SendMessage(new MessageRequest()
+                    try
                     {
-                        CommandId = "C001",
-                        MessageGuid = System.Guid.NewGuid(),
-                        RequestDate = DateTime.Now,
-                        CommandRequestJson = "{\"EquipmentCode\":\"" + index.ToString() + "\"}"
-                    });
+                        client.SendMessage(new MessageRequest()
+                        {
+                            CommandId = "C001",
+                            MessageGuid = System.Guid.NewGuid(),
+                            RequestDate = DateTime.Now,
+                            CommandRequestJson = "{\"EquipmentCode\":\"" + index.ToString() + "\"}"
+                        });
+                    }
+                    catch
+                    {
+                    }
                 });
 
                 System.Threading.Thread.Sleep(1000);

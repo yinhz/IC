@@ -14,7 +14,7 @@ namespace IC.Core.Test
             IC_TCP_MESSAGE_HEADER messageHeader = default(IC_TCP_MESSAGE_HEADER);
             MessageRequest messageRequest = new MessageRequest() { CommandId = "Cxcyadsfnqwerjalxcvasdfsadf8" };
 
-            IC_TCP_MESSAGE_HEADER header = IC_TCP_MESSAGE_HEADER.CreateICTcpMessageHeader(MessageType.Request, int.MaxValue);
+            IC_TCP_MESSAGE_HEADER header = IC_TCP_MESSAGE_HEADER.CreateICTcpMessageHeader(MessageType.Request, int.MaxValue, MessageFormat.Binary);
 
             var bytes = Utils.StructToBytes( header);
 

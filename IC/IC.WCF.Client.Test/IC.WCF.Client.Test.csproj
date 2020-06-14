@@ -59,6 +59,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IC.Core\IC.Core.csproj">
+      <Project>{6EC9A3D9-F701-4790-9820-2A96ED4B03FC}</Project>
+      <Name>IC.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IC.WCF.Client\IC.WCF.Client.csproj">
       <Project>{8da52f22-e4f6-4200-9e90-b5be5908d164}</Project>
       <Name>IC.WCF.Client</Name>

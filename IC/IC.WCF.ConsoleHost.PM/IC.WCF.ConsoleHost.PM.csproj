@@ -57,6 +57,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IC.Core\IC.Core.csproj">
+      <Project>{6ec9a3d9-f701-4790-9820-2a96ed4b03fc}</Project>
+      <Name>IC.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IC.WCF.Client\IC.WCF.Client.csproj">
       <Project>{8da52f22-e4f6-4200-9e90-b5be5908d164}</Project>
       <Name>IC.WCF.Client</Name>
