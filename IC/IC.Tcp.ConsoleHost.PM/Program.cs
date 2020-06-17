@@ -50,13 +50,21 @@ namespace IC.Tcp.ConsoleHost.PM
                     {
                         System.Threading.Tasks.Parallel.For(0, clientCount, (i) =>
                         {
-                            clients[i].SendMessage(new MessageRequest()
+                            try
                             {
-                                CommandId = "C001",
-                                MessageGuid = System.Guid.NewGuid(),
-                                RequestDate = DateTime.Now,
-                                CommandRequestJson = "{\"EquipmentCode\":\"" + System.Guid.NewGuid().ToString() + "    " + i.ToString() + "\"}"
-                            });
+                                clients[i].SendMessage(new MessageRequest()
+                                {
+                                    CommandId = "C001",
+                                    MessageGuid = System.Guid.NewGuid(),
+                                    RequestDate = DateTime.Now,
+                                    CommandRequestJson = "{\"EquipmentCode\":\"" + System.Guid.NewGuid().ToString() + "    " + i.ToString() + "\"}"
+                                });
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
                         });
                     });
                     for (int i = 0; i < clientCount; i++)

@@ -11,14 +11,14 @@ namespace IC.Core.Test
         [TestMethod]
         public void TestMethod1()
         {
-            IC_TCP_MESSAGE_HEADER messageHeader = default(IC_TCP_MESSAGE_HEADER);
+            IC_TCP_MESSAGE_STRUCT messageHeader = default(IC_TCP_MESSAGE_STRUCT);
             MessageRequest messageRequest = new MessageRequest() { CommandId = "Cxcyadsfnqwerjalxcvasdfsadf8" };
 
-            IC_TCP_MESSAGE_HEADER header = IC_TCP_MESSAGE_HEADER.CreateICTcpMessageHeader(MessageType.Request, int.MaxValue, MessageFormat.Binary);
+            IC_TCP_MESSAGE_STRUCT header = IC_TCP_MESSAGE_STRUCT.CreateICTcpMessageStruct(MessageType.Request, int.MaxValue, MessageFormat.Binary);
 
             var bytes = Utils.StructToBytes( header);
 
-            var x = Utils.BytesToStruct<IC_TCP_MESSAGE_HEADER>(bytes);
+            var x = Utils.BytesToStruct<IC_TCP_MESSAGE_STRUCT>(bytes);
 
             //ICTcpHeaderStruct structObj = new ICTcpHeaderStruct()
             //{
