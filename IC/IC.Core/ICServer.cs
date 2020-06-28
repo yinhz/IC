@@ -163,6 +163,7 @@ namespace IC.Core
 
         public MessageResponse ClientMessageRequest(MessageRequest messageRequest)
         {
+            // to-do try catch
             this.OnMessageRequestReceived?.Invoke(this, new MessageRequestReceivedEventArgs(messageRequest));
 
             try

@@ -52,6 +52,7 @@ namespace IC.Tcp
 
                         using (var networkStream = tcpClient.GetStream())
                         {
+                            // to-do 到消息里读取，只登记一次客户端
                             List<byte> clientBufferList = new List<byte>();
 
                             IC_TCP_MESSAGE_STRUCT messageHeader = default(IC_TCP_MESSAGE_STRUCT);
@@ -61,6 +62,8 @@ namespace IC.Tcp
                                 try
                                 {
                                     #region 把数据读到集合里
+
+                                    // buffer 设置多长
                                     byte[] bytes = new byte[tcpClient.ReceiveBufferSize];
 
                                     int readSize = networkStream.Read(bytes, 0, tcpClient.ReceiveBufferSize);
@@ -123,6 +126,7 @@ namespace IC.Tcp
 
                                             if (messageHeader.MessageType == MessageType.Request)
                                             {
+                                                // to-do  ， 阻塞 客户端的消息可以。当 服务端处理不过来的时候
                                                 Task.Run(() =>
                                                 {
                                                     MessageRequest messageRequest = null;

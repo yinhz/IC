@@ -46,13 +46,15 @@ namespace IC.Core
             this.ResponseDate = System.DateTime.Now;
         }
         [DataMember(IsRequired = true)]
+        public Guid MessageGuid { get; set; }
+        [DataMember(IsRequired = true)]
+        public string CommandId { get; set; }
+        [DataMember(IsRequired = true)]
         public bool Success { get; set; }
         [DataMember(IsRequired = true)]
         public string ErrorCode { get; set; }
         [DataMember(IsRequired = true)]
         public string ErrorMessage { get; set; }
-        [DataMember(IsRequired = true)]
-        public Guid MessageGuid { get; set; }
         [DataMember(IsRequired = true)]
         public DateTime ResponseDate { get; set; }
         [DataMember(IsRequired = true)]
