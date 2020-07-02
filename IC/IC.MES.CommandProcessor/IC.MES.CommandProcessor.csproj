@@ -47,6 +47,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OperationCommandProcessor.cs" />
     <Compile Include="CommandProcessor_C002.cs" />
     <Compile Include="CommandProcessor_C001.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

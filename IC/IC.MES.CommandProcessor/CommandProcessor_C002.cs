@@ -9,27 +9,11 @@ using System.Threading.Tasks;
 namespace IC.MES.CommandProcessor
 {
     [CommandProcessorDescription("C002")]
-    public class CommandProcessor_C002 : CommandProcessor<RequestCommand_002, ResponseCommand>
+    public class CommandProcessor_C002 : OperationCommandProcess
     {
+        public override string OperationCode => base.OperationCode;
         public CommandProcessor_C002()
         {
         }
-
-        public override RequestCommand_002 ParseCommand(string commandJson)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<RequestCommand_002>(commandJson);
-        }
-
-        public override ResponseCommand Process(RequestCommand_002 requestCommand)
-        {
-            return new ResponseCommand() { IsSuccess = true };
-        }
-    }
-
-    public class RequestCommand_002 : RequestCommand
-    {
-        public string EquipmentCode { get; set; }
-        
-        public override string CommandId => "C002";
     }
 }

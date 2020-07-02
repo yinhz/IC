@@ -6,7 +6,7 @@ namespace IC.Core
     internal interface ICommandProcessor
     {
         bool Processed { get; }
-        string InternalProcess(string requestCommand);
+        string InternalProcess(string requestCommandJson);
     }
     /// <summary>
     /// 功能处理接口
@@ -15,7 +15,7 @@ namespace IC.Core
         where TRequestCommand : class
         where TResponseCommand : ResponseCommand, new()
     {
-        TRequestCommand ParseCommand(string commandJson);
+        TRequestCommand ParseCommand(string requestCommandJson);
         TResponseCommand InternalProcess(TRequestCommand requestCommand);
         TResponseCommand Process(TRequestCommand requestCommand);
     }
@@ -37,12 +37,12 @@ namespace IC.Core
             return response;
         }
 
-        public virtual string InternalProcess(string requestCommand)
+        public virtual string InternalProcess(string requestCommandJson)
         {
-            return this.Process(this.ParseCommand(requestCommand)).ToJson();
+            return this.Process(this.ParseCommand(requestCommandJson)).ToJson();
         }
 
-        public abstract TRequestCommand ParseCommand(string commandJson);
+        public abstract TRequestCommand ParseCommand(string requestCommandJson);
 
         public abstract TResponseCommand Process(TRequestCommand requestCommand);
     }
