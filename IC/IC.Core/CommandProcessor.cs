@@ -3,7 +3,7 @@ using System;
 
 namespace IC.Core
 {
-    internal interface ICommandProcessor
+    public interface ICommandProcessor
     {
         bool Processed { get; }
         string InternalProcess(string requestCommandJson);
@@ -11,7 +11,7 @@ namespace IC.Core
     /// <summary>
     /// 功能处理接口
     /// </summary>
-    internal interface ICommandProcessor<TRequestCommand, TResponseCommand> : ICommandProcessor
+    public interface ICommandProcessor<TRequestCommand, TResponseCommand> : ICommandProcessor
         where TRequestCommand : class
         where TResponseCommand : ResponseCommand, new()
     {

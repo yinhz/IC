@@ -9,12 +9,17 @@ using System.Threading.Tasks;
 namespace IC.MES.CommandProcessor
 {
     [CommandProcessorDescription("C001")]
-    public class OperationCommandProcess : CommandProcessor<RequestCommand, ResponseCommand>
+    public class OperationCommandProcess : ICommandProcessor
     {
-        public override string InternalProcess(string requestCommandJson)
+        public bool Processed { get; set; }
+
+        public string InternalProcess(string requestCommandJson)
         {
-            return base.InternalProcess(requestCommandJson);
+            string responseCommandJson = this.CallOperation(requestCommandJson);
+            this.Processed = true;
+            return responseCommandJson;
         }
+
         public virtual string OperationCode => "MI.Request";
         public virtual string CallOperation(string requestCommandJson)
         {
@@ -29,16 +34,6 @@ namespace IC.MES.CommandProcessor
             {
                 throw e;
             }
-        }
-
-        public override RequestCommand ParseCommand(string commandJson)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override ResponseCommand Process(RequestCommand requestCommand)
-        {
-            throw new NotImplementedException();
         }
     }
 }
