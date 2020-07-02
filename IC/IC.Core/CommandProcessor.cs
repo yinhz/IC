@@ -5,9 +5,8 @@ namespace IC.Core
 {
     internal interface ICommandProcessor
     {
-        RequestCommand ParseCommand(string commandJson);
         bool Processed { get; }
-        ResponseCommand InternalProcess(RequestCommand requestCommand, MessageRequest messageRequest);
+        string InternalProcess(string requestCommand);
     }
     /// <summary>
     /// 功能处理接口
@@ -16,7 +15,9 @@ namespace IC.Core
         where TRequestCommand : class
         where TResponseCommand : ResponseCommand, new()
     {
-        TResponseCommand Process(TRequestCommand requestCommand, MessageRequest messageRequest);
+        TRequestCommand ParseCommand(string commandJson);
+        TResponseCommand InternalProcess(TRequestCommand requestCommand);
+        TResponseCommand Process(TRequestCommand requestCommand);
     }
 
     public abstract class CommandProcessor<TRequestCommand, TResponseCommand> : ICommandProcessor, ICommandProcessor<TRequestCommand, TResponseCommand>
@@ -29,15 +30,20 @@ namespace IC.Core
         
         public bool Processed { get; private set; }
         
-        public ResponseCommand InternalProcess(RequestCommand requestCommand, MessageRequest messageRequest)
+        public virtual TResponseCommand InternalProcess(TRequestCommand requestCommand)
         {
-            var response = this.Process(requestCommand as TRequestCommand, messageRequest);
+            var response = this.Process(requestCommand as TRequestCommand);
             this.Processed = true;
             return response;
         }
 
-        public abstract RequestCommand ParseCommand(string commandJson);
+        public virtual string InternalProcess(string requestCommand)
+        {
+            return this.Process(this.ParseCommand(requestCommand)).ToJson();
+        }
 
-        public abstract TResponseCommand Process(TRequestCommand requestCommand, MessageRequest messageRequest);
+        public abstract TRequestCommand ParseCommand(string commandJson);
+
+        public abstract TResponseCommand Process(TRequestCommand requestCommand);
     }
 }

@@ -15,14 +15,14 @@ namespace IC.MES.CommandProcessor
         {
         }
 
-        public override RequestCommand ParseCommand(string commandJson)
+        public override RequestCommand_001 ParseCommand(string commandJson)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<RequestCommand_001>(commandJson);
         }
 
-        public override ResponseCommand_001 Process(RequestCommand_001 requestCommand, MessageRequest messageRequest)
+        public override ResponseCommand_001 Process(RequestCommand_001 requestCommand)
         {
-            return new ResponseCommand_001() { IsSuccess = true, Content = messageRequest.CommandRequestJson };
+            return new ResponseCommand_001() { IsSuccess = true, Content = "" };
         }
     }
 

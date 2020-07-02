@@ -14,11 +14,38 @@ namespace IC.Core.Test
         [TestMethod]
         public void TestMethod()
         {
-            MessageRequest m1 = new MessageRequest() { CommandId = "C008" };
+            var data = new
+            {
+                EquipmentCode = "EQU001",
+                Status = "Run",
+                Text = "abc\r\n"
+            };
+
+            MessageRequest m1 = new MessageRequest()
+            {
+                CommandId = "C008",
+                MessageGuid = System.Guid.NewGuid(),
+                RequestDate = DateTime.Now,
+                CommandRequestJson =
+                data.ToJson()
+            };
 
             var bs = m1.SerializeToBinaryFormatter();
-
+            var json = m1.ToJson();
             var m2 = bs.DeserializeToObject<MessageRequest>();
+
+            MessageResponse response = new MessageResponse()
+            {
+                CommandId = "C008",
+                Success = true,
+                ErrorCode = "",
+                ErrorMessage = "",
+                MessageGuid = System.Guid.NewGuid(),
+                ResponseDate = DateTime.Now,
+                CommandResponseJson = data.ToJson()
+            };
+
+            var j1 = response.ToJson();
 
             Assert.AreEqual(m1.MessageGuid, m2.MessageGuid);
         }
