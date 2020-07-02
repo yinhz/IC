@@ -39,7 +39,7 @@ namespace IC.Core
 
         public virtual string InternalProcess(string requestCommandJson)
         {
-            return this.Process(this.ParseCommand(requestCommandJson)).ToJson();
+            return this.InternalProcess(this.ParseCommand(requestCommandJson)).ToJson();
         }
 
         public abstract TRequestCommand ParseCommand(string requestCommandJson);

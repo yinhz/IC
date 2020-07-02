@@ -18,7 +18,7 @@ namespace IC.MES.CommandProcessor
         public virtual string OperationCode => "MI.Request";
         public virtual string CallOperation(string requestCommandJson)
         {
-            // 调用 operation, 固定传入 requestCommandJson, Operation 固定返回 约定的 responseCommand 格式 json.
+            // 调用 operation, 固定传入 RequestCommandJson, Operation 固定返回 约定的 ResponseCommandJson 格式 json.
             // 暂时不作验证？
             try
             {
