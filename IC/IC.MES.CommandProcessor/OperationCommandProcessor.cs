@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace IC.MES.CommandProcessor
 {
-    [CommandProcessorDescription("C001")]
     public class OperationCommandProcess : ICommandProcessor
     {
         public bool Processed { get; set; }
