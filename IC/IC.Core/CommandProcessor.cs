@@ -13,7 +13,7 @@ namespace IC.Core
     /// </summary>
     public interface ICommandProcessor<TRequestCommand, TResponseCommand> : ICommandProcessor
         where TRequestCommand : class
-        where TResponseCommand : ResponseCommand, new()
+        where TResponseCommand : class
     {
         TRequestCommand ParseCommand(string requestCommandJson);
         TResponseCommand InternalProcess(TRequestCommand requestCommand);
