@@ -8,6 +8,14 @@ namespace IC.WCF.Client
 {
     public class ICWcfClient : ICClient
     {
+        public void TestWSBinding()
+        {
+            IC.WCF.Client.ICWcfService.__ICWcfService
+                wcfService = new IC.WCF.Client.ICWcfService.__ICWcfServiceClient();
+
+            var rsl = wcfService.SendMessage(new MessageRequest() { CommandId = "COMP", MessageGuid = System.Guid.NewGuid(), RequestDate = DateTime.Now });
+        }
+
         private _ICWcfServiceClient client;
 
         public ICWcfClient(string clientId, MessageReceivedDelegate messageReceived)

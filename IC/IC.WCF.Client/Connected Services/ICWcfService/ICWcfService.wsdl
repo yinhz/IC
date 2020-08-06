@@ -8,6 +8,13 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
+  <wsp:Policy wsu:Id="WSHttpBinding___ICWcfService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
       <xsd:import schemaLocation="http://localhost:8006/wcfhttpservice/?xsd=xsd0" namespace="http://tempuri.org/" />
@@ -35,23 +42,33 @@
   </wsdl:message>
   <wsdl:portType msc:usingSession="true" name="_ICWcfService">
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendMessage">
-      <wsdl:input wsaw:Action="http://tempuri.org/_ICWcfService/SendMessage" message="tns:_ICWcfService_SendMessage_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/_ICWcfService/SendMessageResponse" message="tns:_ICWcfService_SendMessage_OutputMessage" />
+      <wsdl:input wsaw:Action="http://tempuri.org/__ICWcfService/SendMessage" message="tns:_ICWcfService_SendMessage_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/__ICWcfService/SendMessageResponse" message="tns:_ICWcfService_SendMessage_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="RegisterClient">
-      <wsdl:input wsaw:Action="http://tempuri.org/_ICWcfService/RegisterClient" message="tns:_ICWcfService_RegisterClient_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/_ICWcfService/RegisterClientResponse" message="tns:_ICWcfService_RegisterClient_OutputMessage" />
+      <wsdl:input wsaw:Action="http://tempuri.org/__ICWcfService/RegisterClient" message="tns:_ICWcfService_RegisterClient_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/__ICWcfService/RegisterClientResponse" message="tns:_ICWcfService_RegisterClient_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SendMessageToClient">
       <wsdl:output wsaw:Action="http://tempuri.org/_ICWcfService/SendMessageToClient" message="tns:_ICWcfService_SendMessageToClient_OutputCallbackMessage" />
       <wsdl:input wsaw:Action="http://tempuri.org/_ICWcfService/SendMessageToClientResponse" message="tns:_ICWcfService_SendMessageToClient_InputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
+  <wsdl:portType name="__ICWcfService">
+    <wsdl:operation name="SendMessage">
+      <wsdl:input wsaw:Action="http://tempuri.org/__ICWcfService/SendMessage" message="tns:_ICWcfService_SendMessage_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/__ICWcfService/SendMessageResponse" message="tns:_ICWcfService_SendMessage_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RegisterClient">
+      <wsdl:input wsaw:Action="http://tempuri.org/__ICWcfService/RegisterClient" message="tns:_ICWcfService_RegisterClient_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/__ICWcfService/RegisterClientResponse" message="tns:_ICWcfService_RegisterClient_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
   <wsdl:binding name="NetTcpBinding__ICWcfService" type="tns:_ICWcfService">
     <wsp:PolicyReference URI="#NetTcpBinding__ICWcfService_policy" />
     <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
     <wsdl:operation name="SendMessage">
-      <soap12:operation soapAction="http://tempuri.org/_ICWcfService/SendMessage" style="document" />
+      <soap12:operation soapAction="http://tempuri.org/__ICWcfService/SendMessage" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -60,7 +77,7 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="RegisterClient">
-      <soap12:operation soapAction="http://tempuri.org/_ICWcfService/RegisterClient" style="document" />
+      <soap12:operation soapAction="http://tempuri.org/__ICWcfService/RegisterClient" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -78,11 +95,39 @@
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
+  <wsdl:binding name="WSHttpBinding___ICWcfService" type="tns:__ICWcfService">
+    <wsp:PolicyReference URI="#WSHttpBinding___ICWcfService_policy" />
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendMessage">
+      <soap12:operation soapAction="http://tempuri.org/__ICWcfService/SendMessage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RegisterClient">
+      <soap12:operation soapAction="http://tempuri.org/__ICWcfService/RegisterClient" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
   <wsdl:service name="ICWcfService">
     <wsdl:port name="NetTcpBinding__ICWcfService" binding="tns:NetTcpBinding__ICWcfService">
-      <soap12:address location="net.tcp://localhost:8007/wcttcpservice" />
+      <soap12:address location="net.tcp://localhost:8007/wcftcpservice" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://localhost:8007/wcttcpservice</wsa10:Address>
+        <wsa10:Address>net.tcp://localhost:8007/wcftcpservice</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+    <wsdl:port name="WSHttpBinding___ICWcfService" binding="tns:WSHttpBinding___ICWcfService">
+      <soap12:address location="http://localhost:8006/wcfwsservice" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://localhost:8006/wcfwsservice</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

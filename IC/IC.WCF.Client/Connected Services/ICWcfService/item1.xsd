@@ -12,6 +12,7 @@
   <xs:element name="MessageRequest" nillable="true" type="tns:MessageRequest" />
   <xs:complexType name="MessageResponse">
     <xs:sequence>
+      <xs:element name="CommandId" nillable="true" type="xs:string" />
       <xs:element name="CommandResponseJson" nillable="true" type="xs:string" />
       <xs:element name="ErrorCode" nillable="true" type="xs:string" />
       <xs:element name="ErrorMessage" nillable="true" type="xs:string" />

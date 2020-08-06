@@ -23,7 +23,9 @@ namespace IC.WCF.ConsoleHost.Test
                         CommandResponseJson = "I am response for server request. MessageGuid : " + messageRequest.MessageGuid
                     };
                 }
-                );
+            );
+
+            (client as ICWcfClient).TestWSBinding();
 
             client.SendMessage(new MessageRequest()
             {

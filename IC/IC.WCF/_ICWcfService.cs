@@ -11,7 +11,12 @@ namespace IC.WCF
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
     [ServiceContract(CallbackContract = typeof(IICWcfCallBackService), SessionMode = SessionMode.Required)]
-    public interface _ICWcfService
+    public interface _ICWcfService : __ICWcfService
+    {
+    }
+
+    [ServiceContract]
+    public interface __ICWcfService
     {
         [OperationContract]
         MessageResponse SendMessage(MessageRequest messageRequest);
