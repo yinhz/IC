@@ -178,11 +178,15 @@ namespace IC.Core
                     .GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null)
                     .Invoke(null) as ICommandProcessor;
 
+                var commandResponseJson = commandProcessor
+                        .InternalProcess(messageRequest.CommandRequestJson);
+
+                if (string.IsNullOrEmpty(commandResponseJson))
+                    return null;
+
                 return new MessageResponse()
                 {
-                    CommandResponseJson =
-                        commandProcessor
-                        .InternalProcess(messageRequest.CommandRequestJson),
+                    CommandResponseJson = commandResponseJson,
                     MessageGuid = messageRequest.MessageGuid,
                     Success = true,
                     ResponseDate = DateTime.UtcNow

@@ -6,23 +6,23 @@ namespace IC.Core
     public interface ICommandProcessor
     {
         bool Processed { get; }
-        string InternalProcess(string requestCommandJson);
+        string InternalProcess(string requestJson);
     }
     /// <summary>
     /// 功能处理接口
     /// </summary>
-    public interface ICommandProcessor<TRequestCommand, TResponseCommand> : ICommandProcessor
-        where TRequestCommand : class
-        where TResponseCommand : class
+    public interface ICommandProcessor<TRequest, TResponse> : ICommandProcessor
+        where TRequest : class
+        where TResponse : class
     {
-        TRequestCommand ParseCommand(string requestCommandJson);
-        TResponseCommand InternalProcess(TRequestCommand requestCommand);
-        TResponseCommand Process(TRequestCommand requestCommand);
+        TRequest ParseCommand(string requestJson);
+        TResponse InternalProcess(TRequest request);
+        TResponse Process(TRequest request);
     }
 
-    public abstract class CommandProcessor<TRequestCommand, TResponseCommand> : ICommandProcessor, ICommandProcessor<TRequestCommand, TResponseCommand>
-        where TRequestCommand : class
-        where TResponseCommand : ResponseCommand, new()
+    public abstract class CommandProcessor<TRequest, TResponse> : ICommandProcessor, ICommandProcessor<TRequest, TResponse>
+        where TRequest : class
+        where TResponse : class
     {
         public CommandProcessor()
         {
@@ -30,20 +30,24 @@ namespace IC.Core
         
         public bool Processed { get; private set; }
         
-        public virtual TResponseCommand InternalProcess(TRequestCommand requestCommand)
+        public virtual TResponse InternalProcess(TRequest request)
         {
-            var response = this.Process(requestCommand as TRequestCommand);
+            var response = this.Process(request as TRequest);
             this.Processed = true;
             return response;
         }
 
-        public virtual string InternalProcess(string requestCommandJson)
+        public virtual string InternalProcess(string requestJson)
         {
-            return this.InternalProcess(this.ParseCommand(requestCommandJson)).ToJson();
+            var request = this.ParseCommand(requestJson);
+            var response = this.InternalProcess(request);
+            if (response == null)
+                return string.Empty;
+            return response.ToJson();
         }
 
-        public abstract TRequestCommand ParseCommand(string requestCommandJson);
+        public abstract TRequest ParseCommand(string requestJson);
 
-        public abstract TResponseCommand Process(TRequestCommand requestCommand);
+        public abstract TResponse Process(TRequest request);
     }
 }

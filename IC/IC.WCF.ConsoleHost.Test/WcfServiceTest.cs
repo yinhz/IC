@@ -25,6 +25,14 @@ namespace IC.WCF.ConsoleHost.Test
                 }
                 );
 
+            client.SendMessage(new MessageRequest()
+            {
+                CommandId = "C001",
+                MessageGuid = System.Guid.NewGuid(),
+                RequestDate = DateTime.Now,
+                CommandRequestJson = "{\"EquipmentCode\":\"" + "000" + "\"}"
+            });
+
             int index = 0;
 
             while (true)

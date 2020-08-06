@@ -11,12 +11,6 @@ using System.Threading;
 
 namespace IC.Tcp
 {
-    public struct ICTcpHeaderStruct
-    {
-        public string Header { get; set; }
-        public int DataLength { get; set; }
-    }
-
     public class ICTcpServer : ICServer
     {
         public System.Collections.Concurrent.ConcurrentBag<TcpClient> tcpClients = new System.Collections.Concurrent.ConcurrentBag<TcpClient>();
@@ -122,8 +116,6 @@ namespace IC.Tcp
                                         #region 开始处理收到的消息
                                         try
                                         {
-                                            MessageResponse messageResponse;
-
                                             if (messageHeader.MessageType == MessageType.Request)
                                             {
                                                 // to-do  ， 阻塞 客户端的消息可以。当 服务端处理不过来的时候
@@ -136,7 +128,7 @@ namespace IC.Tcp
                                                     else if (messageHeader.MessageFormat == MessageFormat.Json)
                                                         messageRequest = MessageUtils.FromMessageRequestJson(messageBytes.ToJson());
 
-                                                    messageResponse = base.ClientMessageRequest(messageRequest);
+                                                    var messageResponse = base.ClientMessageRequest(messageRequest);
 
                                                     Console.WriteLine("*********" + Utils.ToJson(messageResponse));
 
@@ -147,7 +139,20 @@ namespace IC.Tcp
                                             }
                                             else if (messageHeader.MessageType == MessageType.Response)
                                             {
-                                                //MessageResponse messageResponse = Utils.DeserializeToObject<MessageResponse>(messageBytes);
+                                                MessageResponse messageResponse = null;
+
+                                                if (messageHeader.MessageFormat == MessageFormat.Binary)
+                                                    messageResponse = Utils.DeserializeToObject<MessageResponse>(messageBytes);
+                                                else if (messageHeader.MessageFormat == MessageFormat.Json)
+                                                    messageResponse = MessageUtils.FromMessageResponseJson(messageBytes.ToJson());
+
+                                                //base.ClientMessageRequest(messageResponse);
+
+                                                //Console.WriteLine("*********" + Utils.ToJson(messageResponse));
+
+                                                //byte[] responseBytes = IC_TCP_MESSAGE_STRUCT.CreateTcpResponseMessage(messageResponse);
+
+                                                //networkStream.Write(responseBytes, 0, responseBytes.Length);
                                             }
                                         }
                                         catch (Exception)

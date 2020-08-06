@@ -49,9 +49,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryFileTest.cs" />
     <Compile Include="SerializeTest.cs" />
     <Compile Include="StructTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VirtualLotTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

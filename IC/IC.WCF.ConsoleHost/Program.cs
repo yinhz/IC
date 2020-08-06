@@ -43,30 +43,30 @@ namespace IC.WCF.ConsoleHost
                     Log("On Client Message Response. Command : " + e.MessageResponse.CommandResponseJson);
                 };
 
-                //System.Timers.Timer timer = new System.Timers.Timer(1000);
-                //timer.Elapsed += (s, e) =>
-                //{
-                //    timer.Stop();
-                //    Console.WriteLine(" Try send data to client!");
-                //    Console.WriteLine(" Find " + wcfService.Clients.Count + " Clients!");
+                System.Timers.Timer timer = new System.Timers.Timer(1000);
+                timer.Elapsed += (s, e) =>
+                {
+                    timer.Stop();
+                    Console.WriteLine(" Try send data to client!");
+                    Console.WriteLine(" Find " + wcfService.Clients.Count + " Clients!");
 
-                //    foreach (var client in wcfService.Clients)
-                //    {
-                //        try
-                //        {
-                //            wcfService.SendMessageToClient(
-                //                client.Key,
-                //                new Core.MessageRequest()
-                //                { CommandId = System.Guid.NewGuid().ToString() });
-                //        }
-                //        catch (Exception e1)
-                //        {
-                //            Console.WriteLine("Send Message To Client Exception. " + e1.Message);
-                //        }
-                //    }
-                //    timer.Start();
-                //};
-                //timer.Start();
+                    foreach (var client in wcfService.Clients)
+                    {
+                        try
+                        {
+                            wcfService.SendMessageToClient(
+                                client.Key,
+                                new Core.MessageRequest()
+                                { CommandId = System.Guid.NewGuid().ToString() });
+                        }
+                        catch (Exception e1)
+                        {
+                            Console.WriteLine("Send Message To Client Exception. " + e1.Message);
+                        }
+                    }
+                    timer.Start();
+                };
+                timer.Start();
 
                 while (true && Console.ReadLine() != "exit")
                 {

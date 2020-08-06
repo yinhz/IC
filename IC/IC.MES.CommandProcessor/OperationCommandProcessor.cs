@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace IC.MES.CommandProcessor
 {
+    [CommandProcessorDescription("COMC")]
     public class OperationCommandProcess : ICommandProcessor
     {
         public bool Processed { get; set; }
